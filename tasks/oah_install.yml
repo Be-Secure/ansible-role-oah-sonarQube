@@ -1,0 +1,32 @@
+---
+
+- name: Running Java version command
+  shell: "java --version"
+  register: java_output
+
+- name: Checking Latest version of SonarQube.
+  shell: 'sudo curl -s https://api.github.com/repos/sonarsource/sonarqube/releases/latest | grep "tarball_url" | cut -d : -f 2,3 | tr -d \" | tr -d "," | xargs | grep -Eo "([0-9]|\.)*(?=\s|$)"'
+  register: sonar_latest_version
+  warn: false
+
+
+- name: Checking Latest version of SonarQube.
+  shell: 'sudo curl -s https://api.github.com/repos/sonarsource/sonarqube/releases/latest | grep "tarball_url" | cut -d : -f 2,3 | tr -d \" | tr -d "," | xargs | grep -Eo "([0-9]|\.)*(?=\s|$)"'
+  register: sonar_latest_version
+  warn: false
+
+- name: Downloading and Extracting SonarQube
+  unarchive:
+    src: "{{ sonar_download_url }}/sonarqube-{{sonar_latest_version.stdout}}.zip"
+    dest: /opt/
+    remote_src: yes
+  #   list_files: yes
+  # register: sonar_installation
+
+# - name: Renaming Installation directory
+#   shell: 'mv /opt/{{sonar_installation.files[0]}} /opt/sonarqube'
+
+
+# - name: Debugging
+#   debug:
+#     msg: "{{sonar_latest_version.stdout}}"
