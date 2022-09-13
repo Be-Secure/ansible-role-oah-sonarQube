@@ -1,0 +1,10 @@
+---
+
+- name: Checking the installed version
+  shell: 'ls /opt/ | grep sonar | grep -Eo "([0-9]|\.)*(?=\s|$)"'
+  register: sonar_installed_version
+
+- name: Uninstall Sonarqube
+  file:
+    path: /opt/sonarqube-{{sonar_installed_version.stdout}}
+    state: absent
