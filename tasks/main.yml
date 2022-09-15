@@ -5,7 +5,7 @@
   when: oah_command == "install"
 
 - include: "tasks/oah-remove.yml"
-  when: oah_command == "uninstall"
+  when: oah_command == "remove"
 
 - include: "tasks/oah-validate.yml"
   when: oah_command == "validate"
