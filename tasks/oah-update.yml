@@ -3,7 +3,6 @@
 - name: Checking Latest version of SonarQube.
   shell: 'sudo curl -s https://api.github.com/repos/sonarsource/sonarqube/releases/latest | grep "tarball_url" | cut -d : -f 2,3 | tr -d \" | tr -d "," | xargs | grep -Eo "([0-9]|\.)*(?=\s|$)"'
   register: sonar_latest_version
-  warn: false
 
 - name: Checking the installed version
   shell: 'ls /opt/ | grep sonar | grep -Eo "([0-9]|\.)*(?=\s|$)"'
