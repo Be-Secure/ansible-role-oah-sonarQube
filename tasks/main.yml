@@ -1,15 +1,15 @@
 ---
 # tasks file for ansible-role-bes-sonarQube
 
-- include: "tasks/oah_install.yml"
+- include: "tasks/oah-install.yml"
   when: oah_command == "install"
 
-- include: "tasks/oah_remove.yml"
+- include: "tasks/oah-remove.yml"
   when: oah_command == "uninstall"
 
-- include: "tasks/oah_validate.yml"
+- include: "tasks/oah-validate.yml"
   when: oah_command == "validate"
 
-- include: "tasks/oah_update.yml"
+- include: "tasks/oah-update.yml"
   when: oah_command == "update"
 
