@@ -3,9 +3,7 @@
 - name: Running Java version command
   shell: "java --version"
   register: java_output
-
-- name: Check if Java is installed
-  failed_when: '"Error" in java_output.stdout'
+  failed_when: java_output.stdout.find('Error') != -1
 
 - name: Checking Latest version of SonarQube.
   shell: 'sudo curl -s https://api.github.com/repos/sonarsource/sonarqube/releases/latest | grep "tarball_url" | cut -d : -f 2,3 | tr -d \" | tr -d "," | xargs | grep -Eo "([0-9]|\.)*(?=\s|$)"'
