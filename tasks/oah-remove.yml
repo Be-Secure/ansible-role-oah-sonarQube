@@ -5,6 +5,7 @@
   register: sonar_installed_version
 
 - name: Uninstall Sonarqube
+  become: yes
   file:
     path: /opt/sonarqube-{{sonar_installed_version.stdout}}
     state: absent
