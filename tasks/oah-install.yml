@@ -1,5 +1,10 @@
 ---
 
+- name: Validating curl installation
+  apt:
+    name: curl
+    state: present
+
 - name: Running Java version command
   shell: "java --version"
   register: java_output
