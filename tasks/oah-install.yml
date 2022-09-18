@@ -11,6 +11,7 @@
   warn: false
 
 - name: Downloading and Extracting SonarQube
+  become: yes
   unarchive:
     src: "{{ sonar_download_url }}/sonarqube-{{sonar_latest_version.stdout}}.zip"
     dest: /opt/
