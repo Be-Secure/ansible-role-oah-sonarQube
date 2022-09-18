@@ -1,20 +1,16 @@
 ---
-
-- name: Checking the installed version
-  shell: 'ls /opt/ | grep sonar | grep -Eo "([0-9]|\.)*(?=\s|$)"'
-  register: sonar_installed_version
-
-- name: Validating Sonarqube installation
-  stat:
-    path: "/opt/sonarqube-{{sonar_installed_version.stdout}}"
+- name: Checking if sonarQube is installed
+  shell: 'ls /opt/ | grep sonar'
   register: sonarqube_installation
+  failed_when: false
+  no_log: True
 
-- name: If Sonarqube exists
-  debug:
-    msg: "Sonarqube is installed"
-  when: "{{sonarqube_installation.stat.exists}}"
+- name: SonarQube not installed
+  fail:
+    msg: Sonarqube not installed
+  when: sonarqube_installation.rc != 0
 
-- name: Sonarqube not installed
+- name: Sonarqube is installed
   debug:
-    msg: "Sonaqube not installed"
-  when: not "{{sonarqube_installation.stat.exists}}"
+    msg: Sonarqube is Installed
+  when: sonarqube_installation.rc == 0
