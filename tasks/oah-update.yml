@@ -17,12 +17,14 @@
   when: "'{{ sonar_latest_version.stdout }}' == '{{ sonar_installed_version.stdout }}'"
 
 - name: Delete old version
+  become: yes
   file:
     path: /opt/sonarqube-{{sonar_installed_version.stdout}}
     state: absent
   when: "'{{ sonar_latest_version.stdout }}' != '{{ sonar_installed_version.stdout }}'"
 
 - name: Install Updated version
+  become: yes
   unarchive:
     src: "{{ sonar_download_url }}/sonarqube-{{sonar_latest_version.stdout}}.zip"
     dest: /opt/
