@@ -13,3 +13,6 @@
 - include: "tasks/oah-update.yml"
   when: oah_command == "update"
 
+- include: "tasks/oah-reset.yml"
+  when: oah_command == "reset"
+
