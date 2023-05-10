@@ -1,0 +1,16 @@
+---
+- name: Checking if sonarQube is installed
+  shell: 'ls /opt/ | grep sonar'
+  register: sonarqube_installation
+  failed_when: false
+  no_log: True
+
+- name: SonarQube not installed
+  fail:
+    msg: Sonarqube not installed
+  when: sonarqube_installation.rc != 0
+
+- name: Sonarqube is installed
+  debug:
+    msg: Sonarqube is Installed
+  when: sonarqube_installation.rc == 0

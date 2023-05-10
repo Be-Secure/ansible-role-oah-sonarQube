@@ -1,0 +1,22 @@
+---
+
+- name: Validating curl installation
+  apt:
+    name: curl
+    state: present
+
+- name: Running Java version command
+  shell: "java --version"
+  register: java_output
+  failed_when: java_output.stdout.find('Error') != -1
+
+- name: Checking Latest version of SonarQube.
+  shell: 'curl -s https://api.github.com/repos/sonarsource/sonarqube/releases/latest | grep "tarball_url" | cut -d : -f 2,3 | tr -d \" | tr -d "," | xargs | grep -Eo "([0-9]|\.)*(?=\s|$)"'
+  register: sonar_latest_version
+
+- name: Downloading and Extracting SonarQube
+  become: yes
+  unarchive:
+    src: "{{ sonar_download_url }}/sonarqube-{{sonar_latest_version.stdout}}.zip"
+    dest: /opt/
+    remote_src: yes
