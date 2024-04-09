@@ -1,3 +1,4 @@
 ---
+sonarqube_version: sonarqube-9.8.0.63668
 sonar_download_url: "https://binaries.sonarsource.com/Distribution/sonarqube"
-
+sonarqube_path: /opt

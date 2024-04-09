@@ -1,16 +1,23 @@
----
-- name: Checking if sonarQube is installed
-  shell: 'ls /opt/ | grep sonar'
-  register: sonarqube_installation
-  failed_when: false
-  no_log: True
+- name: Set download path from BESMAN_TOOL_PATH if available
+  set_fact:
+    sonarqube_path: "{{ lookup('env', 'BESMAN_TOOL_PATH') }}"
+  when: lookup('env', 'BESMAN_TOOL_PATH') != ''
 
-- name: SonarQube not installed
-  fail:
-    msg: Sonarqube not installed
-  when: sonarqube_installation.rc != 0
+- name: Check if SonarQube version is installed
+  stat:
+    path: "{{ sonarqube_path }}/{{ sonarqube_version }}"
+  register: sonarqube_version_exists
 
-- name: Sonarqube is installed
+- name: Print message
   debug:
-    msg: Sonarqube is Installed
-  when: sonarqube_installation.rc == 0
+    msg: "Could not find sonarqube under {{ sonarqube_path }}/{{ sonarqube_version }}"
+  when: not sonarqube_version_exists.stat.exists
+
+- name: Exit from role execution if version doesn't exist
+  meta: end_host
+  when: not sonarqube_version_exists.stat.exists
+
+- name: Print message
+  debug:
+    msg: "Sonarqube {{ sonarqube_version }} found"
+  when: sonarqube_version_exists.stat.exists
