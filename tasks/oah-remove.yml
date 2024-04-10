@@ -1,11 +1,25 @@
----
+- name: Set download path from BESMAN_TOOL_PATH if available
+  set_fact:
+    sonarqube_path: "{{ lookup('env', 'BESMAN_TOOL_PATH') }}"
+  when: lookup('env', 'BESMAN_TOOL_PATH') != ''
 
-- name: Checking the installed version
-  shell: 'ls /opt/ | grep sonar | grep -Eo "([0-9]|\.)*(?=\s|$)"'
-  register: sonar_installed_version
+- name: Check if SonarQube version is installed
+  stat:
+    path: "{{ sonarqube_path }}/{{ sonarqube_version }}"
+  register: sonarqube_version_exists
 
-- name: Uninstall Sonarqube
-  become: yes
+- name: Print message
+  debug:
+    msg: "Could not find sonarqube under {{ sonarqube_path }}/{{ sonarqube_version }}"
+  when: not sonarqube_version_exists.stat.exists
+
+- name: Exit from role execution if version doesn't exist
+  meta: end_host
+  when: not sonarqube_version_exists.stat.exists
+
+- name: Uninstall SonarQube if version is installed
   file:
-    path: /opt/sonarqube-{{sonar_installed_version.stdout}}
+    path: "{{ sonarqube_path }}/{{ sonarqube_version }}"
     state: absent
+  when: sonarqube_version_exists.stat.exists
+  become: yes
