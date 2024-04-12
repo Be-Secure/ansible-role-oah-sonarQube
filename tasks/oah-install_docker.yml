@@ -38,7 +38,7 @@
     name: docker
     state: started
 
-- name: Check if Fossology image is present
+- name: Check if Sonarqube image is present
   become: yes
   shell: docker images sonarqube
   register: sonarqube_image_check
@@ -46,10 +46,10 @@
 
 - name: Print message
   debug:
-    msg: Fossology image already exist
+    msg: Sonarqube image already exist
   when: sonarqube_image_check.rc == 0
 
-- name: Pulling fossology image
+- name: Pulling Sonarqube image
   become: yes
   community.docker.docker_image:
     name: sonarqube
