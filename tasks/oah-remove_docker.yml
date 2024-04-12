@@ -47,6 +47,12 @@
       become: yes
       command: "docker stop {{ docker_container_id.stdout }}"
       when: docker_container_id.stdout != ''
+    
+    - name: Remove container
+      become: yes
+      command: "docker rm {{ docker_container_id.stdout }}"
+      when: docker_container_id.stdout != ''
+
 
   when: sonarqube_image_check.rc == 0
 
