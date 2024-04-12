@@ -47,15 +47,15 @@
 - name: Print message
   debug:
     msg: Sonarqube image already exist
-  when: sonarqube_image_check.rc == 0
+  when: "'sonarqube' not in sonarqube_image_check.stdout"
 
-- name: Pulling Sonarqube image
+- name: Pulling SonarQube image
   become: yes
   community.docker.docker_image:
     name: sonarqube
     source: pull
     state: present
-  when: sonarqube_image_check.stdout | grep "sonarqube"
+  when: "'sonarqube' not in sonarqube_image_check.stdout"
 
 
 
