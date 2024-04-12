@@ -55,7 +55,7 @@
     name: sonarqube
     source: pull
     state: present
-  when: sonarqube_image_check.rc != 0
+  when: sonarqube_image_check.stdout | grep "sonarqube"
 
 
 
