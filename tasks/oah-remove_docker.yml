@@ -1,0 +1,68 @@
+- name: Check if Fossology image is present
+  become: yes
+  shell: docker images sonarqube
+  register: sonarqube_image_check
+  failed_when: false
+
+- name: Display Docker images
+  debug:
+    msg: "Docker ID:{{ sonarqube_image_check}}"
+  failed_when: false
+
+- name: Stopping docker container if up
+  block: 
+    # - name: Display Docker images
+    #   debug:
+    #     msg: "Docker ID:{{ sonarqube_image_check }}"
+    #   failed_when: false
+
+    # - name: Get image id
+    #   become: yes
+    #   shell: |                                                 
+    #     image_id=$(docker images --format="{{'{{'}}.Repository{{'}}'}} {{'{{'}}.ID{{'}}'}}" | grep "fossology" | cut -d " " -f 2)
+    #     echo $image_id
+    #   register: docker_image_id
+    #   failed_when: false
+    #   when: sonarqube_image_check.rc == 0
+
+    # - name: print image id
+    #   debug:
+    #     msg: "image id: {{ docker_image_id.stdout }}"
+    #   when: docker_image_id.stdout != ''
+
+    - name: Check if container running
+      become: yes
+      shell: |
+        container_id=$(docker ps --format '{{'{{'}}.ID{{'}}'}} {{'{{'}}.Image{{'}}'}}' | grep "sonarqube" | cut -d " " -f 1)
+        echo $container_id
+      register: docker_container_id
+      failed_when: false
+
+    - name: print container id
+      debug:
+        msg: "Container id: {{ docker_container_id.stdout }}"
+      when: docker_container_id.stdout != ''
+
+    - name: Stop docker container 
+      become: yes
+      command: "docker stop {{ docker_container_id.stdout }}"
+      when: docker_container_id.stdout != ''
+
+  when: sonarqube_image_check.rc == 0
+
+- name: Removing docker image
+  become: yes
+  shell: |
+    docker image rmi -f sonarqube
+  when: sonarqube_image_check.rc == 0
+
+- name: Print message
+  debug:
+    msg: Fossology image does not exist
+  when: sonarqube_image_check.rc != 0
+
+  #get image id using image name
+  #sudo docker images --format="{{.Repository}} {{.ID}}"
+  #stop container using image id
+  #sudo docker stop $(sudo docker ps -q --filter ancestor=63f4cac1a40f)
+

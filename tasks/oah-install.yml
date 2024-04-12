@@ -1,54 +1,5 @@
-- name: Check if SonarQube directory already exists
-  stat:
-    path: "{{ sonarqube_path }}/{{ sonarqube_version }}"
-  register: sonarqube_dir
+- include_tasks: "tasks/oah-install_source.yml"
+  when: sonar_install_mode == "source"
 
-- name: Print dir found message
-  debug:
-    msg: "The SonarQube is already present under {{ sonarqube_path }}/{{ sonarqube_version }}"
-  when: sonarqube_dir.stat.exists
-  
-- name: Exit gracefully if SonarQube directory already exists
-  meta: end_host
-  when: sonarqube_dir.stat.exists
-
-- name: Validating curl installation
-  apt:
-    name: curl
-    state: present
-
-- name: Running Java version command
-  shell: "java --version"
-  register: java_output
-  failed_when: java_output.stdout.find('Error') != -1
-
-- name: Checking Latest version of SonarQube.
-  shell: 'curl -s https://api.github.com/repos/sonarsource/sonarqube/releases/latest | grep "tarball_url" | cut -d : -f 2,3 | tr -d \" | tr -d "," | xargs | grep -Eo "([0-9]|\.)*(?=\s|$)"'
-  register: sonarqube_latest_version
-  when: sonarqube_version == 'latest'
-
-- name: Set download version to latest
-  set_fact:
-    sonarqube_version: "{{ sonarqube_latest_version.stdout }}"
-  when: sonarqube_version == 'latest'
-
-- name: Print the value of sonarqube_version in a standard format
-  debug:
-    msg: "The SonarQube version to be installed is {{ sonarqube_version }}"
-
-
-- name: Set download path from BESMAN_TOOL_PATH if available
-  set_fact:
-    sonarqube_path: "{{ lookup('env', 'BESMAN_TOOL_PATH') }}"
-  when: lookup('env', 'BESMAN_TOOL_PATH') != ''
-
-- name: Print sonarqube download path
-  debug:
-    msg: "Sonarqube binaries will be downloaded to  {{ sonarqube_path }}"
-
-- name: Downloading and Extracting SonarQube
-  become: yes
-  unarchive:
-    src: "{{ sonar_download_url }}/{{ sonarqube_version }}.zip"
-    dest: "{{ sonarqube_path }}"
-    remote_src: yes
+- include_tasks: "tasks/oah-install_docker.yml"
+  when: sonar_install_mode == "docker"
